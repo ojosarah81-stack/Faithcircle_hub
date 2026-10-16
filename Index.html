@@ -40,4 +40,79 @@ function renderQ(){answered=false;let q=quiz[qi];document.getElementById('qcount
 function answer(i,b){if(answered)return;answered=true;let q=quiz[qi];[...document.querySelectorAll('.answer')].forEach((x,j)=>{x.disabled=true;if(j===q.c)x.classList.add('correct')});if(i===q.c){points+=10;document.getElementById('feedback').textContent=`Correct! +10 points · Read ${q.ref}.`}else{b.classList.add('wrong');document.getElementById('feedback').textContent=`Not quite — read ${q.ref} to learn more.`}document.getElementById('score').textContent=`⭐ ${points} points`;document.getElementById('progress').style.width=`${(qi+1)/quiz.length*100}%`;document.getElementById('next').disabled=false;if(qi===quiz.length-1)document.getElementById('next').textContent='See my result →'}
 function nextQ(){if(!answered)return;if(qi<quiz.length-1){qi++;renderQ()}else{document.getElementById('question').textContent=`You earned ${points} out of 50 points!`;document.getElementById('answers').innerHTML='';document.getElementById('feedback').textContent=points===50?'Amazing! Keep growing in the Word.':'Good job showing up to learn. Review the verses and play again!';document.getElementById('qcount').textContent='Challenge complete';document.getElementById('progress').style.width='100%';document.getElementById('next').style.display='none';document.getElementById('restart').style.display='inline-block'}}
 function restart(){qi=0;points=0;renderQ()}
-function openModal(kind){document.getElementById('modtitle').textContent=kind==='signin'?'Welcome back to FaithCircle':'Join the FaithCircle family';document.getElementById('moddesc').textContent=kind==='signin'?'Si
+function openModal(kind){
+  document.getElementById('modtitle').textContent =
+    kind === 'signin'
+      ? 'Welcome back to FaithCircle'
+      : 'Join the FaithCircle family';
+
+  document.getElementById('moddesc').textContent =
+    kind === 'signin'
+      ? 'Sign-in is a preview only. Real accounts are not available yet.'
+      : 'Complete this form to preview your FaithCircle welcome.';
+
+  document.getElementById('modalback').style.display = 'flex';
+}
+
+function closeModal(){
+  document.getElementById('modalback').style.display = 'none';
+}
+
+function submitDemo(event){
+  event.preventDefault();
+
+  const name = document.getElementById('fullname').value.trim();
+
+  document.getElementById('modtitle').textContent =
+    'Welcome to FaithCircle, ' + name + '! 💙';
+
+  document.getElementById('moddesc').textContent =
+    'Your welcome preview is ready. Real account registration will be added in a future version.';
+
+  document.getElementById('memberform').style.display = 'none';
+}
+
+function sendDemo(){
+  const input = document.getElementById('chatinput');
+  const message = input.value.trim();
+
+  if(!message){
+    toast('Please type a message first.');
+    return;
+  }
+
+  const box = document.getElementById('messages');
+  const bubble = document.createElement('div');
+
+  bubble.className = 'msg mine';
+
+  const label = document.createElement('strong');
+  label.textContent = 'You · preview';
+
+  bubble.appendChild(label);
+  bubble.appendChild(document.createTextNode(message));
+  box.appendChild(bubble);
+
+  input.value = '';
+  box.scrollTop = box.scrollHeight;
+
+  toast('Message added to this local demo. It has not been sent to other people.');
+}
+
+function toast(message){
+  const box = document.getElementById('toast');
+
+  box.textContent = message;
+  box.style.display = 'block';
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer = setTimeout(function(){
+    box.style.display = 'none';
+  }, 3000);
+}
+
+renderQ();
+</script>
+</body>
+</html>
